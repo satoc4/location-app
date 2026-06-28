@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef } from "react";
 import type { CSSProperties } from "react";
 import { AttributionControl, LngLatBounds, Map as MapLibreMap, Marker, NavigationControl, Popup } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import type { Coordinate, MapMarker } from "../../domain/types";
 import { useI18n } from "../../i18n/useI18n";
-import { colors, radius, spacing } from "../../styles/theme";
+import { radius } from "../../styles/theme";
 import { fallbackCoordinate, mapLibreStyle, pinColors } from "./mapLibreStyle";
 
 type MapPanelProps = {
@@ -247,26 +247,8 @@ export function MapPanel({ coordinate, markers = [], points = [] }: MapPanelProp
   }, [points]);
 
   return (
-    <View style={styles.panel}>
-      <Text style={styles.kicker}>{t("map.title")}</Text>
-      <Text style={styles.title}>
-        {latest ? `${latest.lat.toFixed(6)}, ${latest.lng.toFixed(6)}` : t("map.noPosition")}
-      </Text>
-      <Text style={styles.meta}>{t("map.queuedPoints", { count: points.length })}</Text>
+    <View style={styles.container}>
       <div ref={containerRef} style={webStyles.map} />
-      {markers.length ? (
-        <View style={styles.markerList}>
-          {markers.map((marker) => (
-            <View key={marker.id} style={styles.markerRow}>
-              <View style={[styles.markerDot, { backgroundColor: markerColor(marker) }]} />
-              <View style={styles.markerCopy}>
-                <Text style={styles.markerTitle}>{marker.title}</Text>
-                {marker.description ? <Text style={styles.markerMeta}>{marker.description}</Text> : null}
-              </View>
-            </View>
-          ))}
-        </View>
-      ) : null}
     </View>
   );
 }
@@ -281,53 +263,11 @@ const webStyles = {
 } satisfies Record<string, CSSProperties>;
 
 const styles = StyleSheet.create({
-  panel: {
-    backgroundColor: colors.text,
+  container: {
     borderRadius: radius.md,
-    gap: spacing.sm,
-    minHeight: 330,
-    padding: spacing.lg
-  },
-  kicker: {
-    color: "#B7E4DE",
-    fontSize: 12,
-    fontWeight: "800"
-  },
-  title: {
-    color: colors.surface,
-    fontSize: 24,
-    fontWeight: "800"
-  },
-  meta: {
-    color: "#C9D1D6",
-    fontSize: 13
-  },
-  markerList: {
-    gap: spacing.sm,
-    marginTop: spacing.sm
-  },
-  markerRow: {
-    alignItems: "center",
-    flexDirection: "row",
-    gap: spacing.sm
-  },
-  markerDot: {
-    borderRadius: 6,
-    height: 12,
-    width: 12
-  },
-  markerCopy: {
-    flex: 1
-  },
-  markerTitle: {
-    color: colors.surface,
-    fontSize: 13,
-    fontWeight: "800"
-  },
-  markerMeta: {
-    color: "#C9D1D6",
-    fontSize: 12,
-    marginTop: 2
+    height: 260,
+    overflow: "hidden",
+    width: "100%"
   }
 });
 

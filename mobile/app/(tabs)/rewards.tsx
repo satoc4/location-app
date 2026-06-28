@@ -2,13 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 
 import { geoactionClient } from "../../src/api/geoactionClient";
+import { Card } from "../../src/components/Card";
 import { Metric } from "../../src/components/Metric";
 import { Screen } from "../../src/components/Screen";
 import { StatusPill } from "../../src/components/StatusPill";
 import { localizeRewardDescription, localizeStatus } from "../../src/i18n/domainText";
 import type { Locale } from "../../src/i18n/strings";
 import { useI18n } from "../../src/i18n/useI18n";
-import { colors, radius, spacing } from "../../src/styles/theme";
+import { colors, spacing } from "../../src/styles/theme";
 
 function formatDate(value: string, locale: Locale) {
   return new Intl.DateTimeFormat(locale === "ja" ? "ja-JP" : "en-US", {
@@ -39,14 +40,14 @@ export default function RewardsScreen() {
       {rewardsQuery.isFetching ? <ActivityIndicator color={colors.primary} /> : null}
 
       {!rewardsQuery.isFetching && rewards.length === 0 ? (
-        <View style={styles.empty}>
+        <Card style={styles.empty}>
           <StatusPill label={t("rewards.empty")} tone="neutral" />
           <Text style={styles.emptyTitle}>{t("rewards.noRewardsYet")}</Text>
-        </View>
+        </Card>
       ) : null}
 
       {rewards.map((reward) => (
-        <View key={reward.id} style={styles.card}>
+        <Card key={reward.id} style={styles.card}>
           <View style={styles.cardHeader}>
             <View style={styles.titleBlock}>
               <Text style={styles.amount}>
@@ -69,7 +70,7 @@ export default function RewardsScreen() {
               {t("rewards.expiresAt", { date: formatDate(reward.expiresAt, locale) })}
             </Text>
           </View>
-        </View>
+        </Card>
       ))}
     </Screen>
   );
@@ -82,12 +83,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   empty: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.lg
+    gap: spacing.sm
   },
   emptyTitle: {
     color: colors.text,
@@ -95,12 +91,7 @@ const styles = StyleSheet.create({
     fontWeight: "900"
   },
   card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   cardHeader: {
     alignItems: "flex-start",

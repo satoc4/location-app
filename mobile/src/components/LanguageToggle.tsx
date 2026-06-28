@@ -12,7 +12,7 @@ export function LanguageToggle() {
 
   return (
     <View accessibilityRole="tablist" style={styles.container}>
-      <Feather color={colors.muted} name="globe" size={15} />
+      <Feather color={colors.primaryDark} name="globe" size={15} />
       {locales.map((item) => {
         const selected = item === locale;
         return (
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "flex-start",
     backgroundColor: colors.surface,
-    borderColor: colors.border,
+    borderColor: colors.borderSoft,
     borderRadius: radius.md,
     borderWidth: 1,
     flexDirection: "row",
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs
   },
   selected: {
-    backgroundColor: colors.primary
+    backgroundColor: colors.primaryDark
   },
   label: {
     color: colors.muted,

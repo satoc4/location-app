@@ -4,6 +4,7 @@ import { Alert, Platform, StyleSheet, Text, View } from "react-native";
 
 import { geoactionClient } from "../../src/api/geoactionClient";
 import { ActionButton } from "../../src/components/ActionButton";
+import { Card } from "../../src/components/Card";
 import { Metric } from "../../src/components/Metric";
 import { ProgressBar } from "../../src/components/ProgressBar";
 import { Screen } from "../../src/components/Screen";
@@ -391,11 +392,11 @@ export default function TrackScreen() {
 
   return (
     <Screen title={t("track.title")} subtitle={t("track.subtitle")}>
-      <View style={styles.mapShell}>
+      <Card padding="none" style={styles.mapShell}>
         <MapPanel coordinate={current} markers={stepMarkers} points={queued} />
-      </View>
+      </Card>
 
-      <View style={styles.measurementPanel}>
+      <Card style={styles.measurementPanel}>
         <View style={styles.measurementHeader}>
           <View style={styles.measurementTitleBlock}>
             <Text style={styles.panelLabel}>{t("track.measurement")}</Text>
@@ -444,10 +445,10 @@ export default function TrackScreen() {
             variant="danger"
           />
         </View>
-      </View>
+      </Card>
 
       {activeActionRun ? (
-        <View style={styles.progressPanel}>
+        <Card style={styles.progressPanel}>
           <View style={styles.progressHeader}>
             <View style={styles.measurementTitleBlock}>
               <Text style={styles.panelLabel}>{t("track.overallProgress")}</Text>
@@ -476,10 +477,10 @@ export default function TrackScreen() {
               ) : null}
             </View>
           ) : null}
-        </View>
+        </Card>
       ) : null}
 
-      <View style={styles.panel}>
+      <Card style={styles.panel}>
         <View style={styles.panelHeader}>
           <StatusPill
             label={tracking ? t("track.backgroundOn") : t("track.backgroundOff")}
@@ -496,7 +497,7 @@ export default function TrackScreen() {
         <Text style={styles.coordinate}>
           {coordinateLabel(current, t("track.noCurrentPosition"))}
         </Text>
-      </View>
+      </Card>
 
       <ActionButton
         icon={showDeveloperTools ? "chevron-up" : "sliders"}
@@ -506,7 +507,7 @@ export default function TrackScreen() {
       />
 
       {showDeveloperTools ? (
-        <View style={styles.developerPanel}>
+        <Card style={styles.developerPanel}>
           <Text style={styles.developerTitle}>{t("track.manualControls")}</Text>
           <View style={styles.buttonGrid}>
             <ActionButton
@@ -534,11 +535,11 @@ export default function TrackScreen() {
               variant="secondary"
             />
           </View>
-        </View>
+        </Card>
       ) : null}
 
       {activeActionRun ? (
-        <View style={styles.stepsPanel}>
+        <Card style={styles.stepsPanel}>
           {activeActionRun.steps.map((step, index) => (
             <View key={step.stepId} style={styles.stepRow}>
               <Text style={styles.stepIndex}>{index + 1}</Text>
@@ -557,7 +558,7 @@ export default function TrackScreen() {
               </View>
             </View>
           ))}
-        </View>
+        </Card>
       ) : null}
 
       {notice ? <Text style={styles.notice}>{notice}</Text> : null}
@@ -567,16 +568,10 @@ export default function TrackScreen() {
 
 const styles = StyleSheet.create({
   mapShell: {
-    borderRadius: radius.md,
     overflow: "hidden"
   },
   measurementPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   measurementHeader: {
     alignItems: "flex-start",
@@ -604,12 +599,7 @@ const styles = StyleSheet.create({
     lineHeight: 20
   },
   progressPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   progressHeader: {
     alignItems: "flex-start",
@@ -623,10 +613,14 @@ const styles = StyleSheet.create({
     fontWeight: "900"
   },
   currentStepBlock: {
-    borderTopColor: colors.border,
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.borderSoft,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderTopColor: colors.borderSoft,
     borderTopWidth: 1,
     gap: spacing.sm,
-    paddingTop: spacing.md
+    padding: spacing.md
   },
   currentStepTitle: {
     color: colors.text,
@@ -652,12 +646,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   panelHeader: {
     flexDirection: "row",
@@ -666,7 +655,7 @@ const styles = StyleSheet.create({
   },
   coordinate: {
     color: colors.text,
-    fontSize: 22,
+    fontSize: 21,
     fontWeight: "900"
   },
   metrics: {
@@ -678,12 +667,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   developerPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   developerTitle: {
     color: colors.text,
@@ -691,19 +675,14 @@ const styles = StyleSheet.create({
     fontWeight: "900"
   },
   stepsPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   stepRow: {
     flexDirection: "row",
     gap: spacing.md
   },
   stepIndex: {
-    color: colors.primary,
+    color: colors.primaryDark,
     fontSize: 15,
     fontWeight: "900",
     width: 22

@@ -33,12 +33,17 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background
   },
   content: {
-    gap: spacing.lg,
+    alignSelf: "center",
+    gap: spacing.xl,
+    maxWidth: 980,
     padding: spacing.lg,
-    paddingBottom: 96
+    paddingBottom: 96,
+    width: "100%"
   },
   header: {
-    gap: spacing.xs
+    gap: spacing.sm,
+    paddingTop: spacing.xs,
+    width: "100%"
   },
   headerTop: {
     alignItems: "flex-start",
@@ -49,12 +54,14 @@ const styles = StyleSheet.create({
   title: {
     color: colors.text,
     flex: 1,
-    fontSize: 28,
-    fontWeight: "800"
+    fontSize: 30,
+    fontWeight: "900",
+    lineHeight: 36
   },
   subtitle: {
     color: colors.muted,
     fontSize: 14,
-    lineHeight: 20
+    lineHeight: 21,
+    maxWidth: 680
   }
 });

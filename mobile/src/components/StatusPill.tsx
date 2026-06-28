@@ -17,9 +17,17 @@ const toneColor: Record<Tone, string> = {
   blue: colors.blue
 };
 
+const toneBackground: Record<Tone, string> = {
+  neutral: colors.surfaceMuted,
+  success: colors.successSoft,
+  warning: colors.amberSoft,
+  danger: colors.roseSoft,
+  blue: colors.blueSoft
+};
+
 export function StatusPill({ label, tone = "neutral" }: StatusPillProps) {
   return (
-    <View style={[styles.pill, { borderColor: toneColor[tone] }]}>
+    <View style={[styles.pill, { backgroundColor: toneBackground[tone], borderColor: toneColor[tone] }]}>
       <Text style={[styles.label, { color: toneColor[tone] }]}>{label}</Text>
     </View>
   );
@@ -30,7 +38,7 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     borderRadius: radius.sm,
     borderWidth: 1,
-    paddingHorizontal: spacing.sm,
+    paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs
   },
   label: {

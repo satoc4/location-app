@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import type { PressableProps, StyleProp, ViewStyle } from "react-native";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
-import { colors, radius, spacing } from "../styles/theme";
+import { colors, radius, shadows, spacing } from "../styles/theme";
 
 type ActionButtonProps = Omit<PressableProps, "style"> & {
   label: string;
@@ -37,10 +37,10 @@ export function ActionButton({
       {...props}
     >
       {loading ? (
-        <ActivityIndicator color={variant === "secondary" ? colors.primary : colors.surface} />
+        <ActivityIndicator color={variant === "secondary" ? colors.primaryDark : colors.surface} />
       ) : (
         <Feather
-          color={variant === "secondary" ? colors.primary : colors.surface}
+          color={variant === "secondary" ? colors.primaryDark : colors.surface}
           name={icon}
           size={18}
         />
@@ -56,29 +56,33 @@ const styles = StyleSheet.create({
   button: {
     alignItems: "center",
     borderRadius: radius.md,
+    borderWidth: 1,
     flexDirection: "row",
     gap: spacing.sm,
     justifyContent: "center",
-    minHeight: 46,
+    minHeight: 48,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md
   },
   primary: {
-    backgroundColor: colors.primary
+    ...shadows.card,
+    backgroundColor: colors.primary,
+    borderColor: colors.primary
   },
   secondary: {
     backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderWidth: 1
+    borderColor: colors.borderSoft
   },
   danger: {
-    backgroundColor: colors.rose
+    backgroundColor: colors.rose,
+    borderColor: colors.rose
   },
   disabled: {
     opacity: 0.48
   },
   pressed: {
-    opacity: 0.82
+    opacity: 0.86,
+    transform: [{ translateY: 1 }]
   },
   label: {
     color: colors.surface,
@@ -86,6 +90,6 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   secondaryLabel: {
-    color: colors.primary
+    color: colors.primaryDark
   }
 });

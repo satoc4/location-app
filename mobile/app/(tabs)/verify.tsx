@@ -4,12 +4,13 @@ import { Alert, StyleSheet, Text, View } from "react-native";
 
 import { geoactionClient } from "../../src/api/geoactionClient";
 import { ActionButton } from "../../src/components/ActionButton";
+import { Card } from "../../src/components/Card";
 import { Screen } from "../../src/components/Screen";
 import { StatusPill } from "../../src/components/StatusPill";
 import { localizeStatus } from "../../src/i18n/domainText";
 import { useI18n } from "../../src/i18n/useI18n";
 import { useSessionStore } from "../../src/store/sessionStore";
-import { colors, radius, spacing } from "../../src/styles/theme";
+import { colors, spacing } from "../../src/styles/theme";
 
 export default function VerifyScreen() {
   const { locale, t } = useI18n();
@@ -46,18 +47,18 @@ export default function VerifyScreen() {
   if (!permission?.granted) {
     return (
       <Screen title={t("verify.title")} subtitle={t("verify.subtitle")}>
-        <View style={styles.emptyPanel}>
+        <Card style={styles.emptyPanel}>
           <StatusPill label={t("verify.cameraPermission")} tone="warning" />
           <Text style={styles.emptyTitle}>{t("verify.cameraAccessRequired")}</Text>
           <ActionButton icon="camera" label={t("verify.allowCamera")} onPress={requestPermission} />
-        </View>
+        </Card>
       </Screen>
     );
   }
 
   return (
     <Screen title={t("verify.title")} subtitle={t("verify.subtitle")}>
-      <View style={styles.cameraShell}>
+      <Card padding="none" style={styles.cameraShell}>
         <CameraView
           barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
           onBarcodeScanned={({ data }) => {
@@ -67,9 +68,9 @@ export default function VerifyScreen() {
           }}
           style={styles.camera}
         />
-      </View>
+      </Card>
 
-      <View style={styles.panel}>
+      <Card style={styles.panel}>
         <View style={styles.row}>
           {activeActionRun ? (
             <StatusPill label={localizeStatus(locale, activeActionRun.status)} tone="blue" />
@@ -85,14 +86,13 @@ export default function VerifyScreen() {
           onPress={() => setScannedValue(null)}
           variant="secondary"
         />
-      </View>
+      </Card>
     </Screen>
   );
 }
 
 const styles = StyleSheet.create({
   cameraShell: {
-    borderRadius: radius.md,
     height: 360,
     overflow: "hidden"
   },
@@ -100,12 +100,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   panel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   row: {
     flexDirection: "row",
@@ -118,12 +113,7 @@ const styles = StyleSheet.create({
     fontWeight: "900"
   },
   emptyPanel: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   emptyTitle: {
     color: colors.text,

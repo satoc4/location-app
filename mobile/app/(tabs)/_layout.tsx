@@ -3,7 +3,7 @@ import { Tabs } from "expo-router";
 import type { ColorValue } from "react-native";
 
 import { useI18n } from "../../src/i18n/useI18n";
-import { colors } from "../../src/styles/theme";
+import { colors, radius } from "../../src/styles/theme";
 
 type IconName = keyof typeof Feather.glyphMap;
 
@@ -20,16 +20,25 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
+        tabBarActiveTintColor: colors.primaryDark,
         tabBarInactiveTintColor: colors.muted,
+        tabBarActiveBackgroundColor: colors.surfaceAlt,
         tabBarStyle: {
-          borderTopColor: colors.border,
-          height: 64,
-          paddingBottom: 10,
+          backgroundColor: colors.surface,
+          borderTopColor: colors.borderSoft,
+          borderTopWidth: 1,
+          height: 72,
+          paddingBottom: 12,
+          paddingHorizontal: 8,
           paddingTop: 8
         },
+        tabBarItemStyle: {
+          borderRadius: radius.md,
+          marginHorizontal: 2
+        },
         tabBarLabelStyle: {
-          fontSize: 11
+          fontSize: 11,
+          fontWeight: "800"
         }
       }}
     >

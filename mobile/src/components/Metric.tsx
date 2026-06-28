@@ -18,21 +18,23 @@ export function Metric({ label, value }: MetricProps) {
 
 const styles = StyleSheet.create({
   metric: {
-    backgroundColor: colors.surfaceAlt,
+    backgroundColor: colors.surfaceMuted,
+    borderColor: colors.borderSoft,
     borderRadius: radius.md,
+    borderWidth: 1,
     gap: spacing.xs,
-    minWidth: 92,
+    minWidth: 96,
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm
+    paddingVertical: spacing.md
   },
   value: {
     color: colors.text,
-    fontSize: 16,
-    fontWeight: "800"
+    fontSize: 17,
+    fontWeight: "900"
   },
   label: {
     color: colors.muted,
     fontSize: 11,
-    fontWeight: "600"
+    fontWeight: "800"
   }
 });

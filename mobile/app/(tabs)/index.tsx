@@ -4,6 +4,7 @@ import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 
 import { geoactionClient } from "../../src/api/geoactionClient";
 import { ActionButton } from "../../src/components/ActionButton";
+import { Card } from "../../src/components/Card";
 import { Metric } from "../../src/components/Metric";
 import { Screen } from "../../src/components/Screen";
 import { StatusPill } from "../../src/components/StatusPill";
@@ -57,7 +58,7 @@ function PlanCard({
   });
 
   return (
-    <View style={styles.card}>
+    <Card style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.titleBlock}>
           <Text style={styles.planTitle}>{localizedPlan.title}</Text>
@@ -130,7 +131,7 @@ function PlanCard({
           style={styles.startButton}
         />
       </View>
-    </View>
+    </Card>
   );
 }
 
@@ -208,11 +209,11 @@ export default function PlansScreen() {
 
   return (
     <Screen title={t("plans.title")} subtitle={t("plans.subtitle")}>
-      <View style={styles.mapShell}>
+      <Card padding="none" style={styles.mapShell}>
         <MapPanel coordinate={origin} markers={destinationMarkers} />
-      </View>
+      </Card>
 
-      <View style={styles.statusPanel}>
+      <Card padding="md" style={styles.statusPanel}>
         <View>
           <Text style={styles.statusLabel}>{t("plans.origin")}</Text>
           <Text style={styles.statusValue}>
@@ -225,17 +226,17 @@ export default function PlansScreen() {
           onPress={refreshLocation}
           variant="secondary"
         />
-      </View>
+      </Card>
 
       {locationError ? <Text style={styles.error}>{locationError}</Text> : null}
 
       {activeActionRun ? (
-        <View style={styles.activeRun}>
+        <Card padding="md" style={styles.activeRun}>
           <StatusPill label={localizeStatus(locale, activeActionRun.status)} tone="success" />
           <Text style={styles.activeRunText}>
             {t("plans.activeAction", { id: activeActionRun.id })}
           </Text>
-        </View>
+        </Card>
       ) : null}
 
       {plansQuery.isFetching ? <ActivityIndicator color={colors.primary} /> : null}
@@ -254,18 +255,12 @@ export default function PlansScreen() {
 
 const styles = StyleSheet.create({
   mapShell: {
-    borderRadius: radius.md,
     overflow: "hidden"
   },
   statusPanel: {
     alignItems: "center",
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
     flexDirection: "row",
-    justifyContent: "space-between",
-    padding: spacing.md
+    justifyContent: "space-between"
   },
   statusLabel: {
     color: colors.muted,
@@ -283,12 +278,7 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   activeRun: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.sm,
-    padding: spacing.md
+    gap: spacing.sm
   },
   activeRunText: {
     color: colors.text,
@@ -296,12 +286,7 @@ const styles = StyleSheet.create({
     fontWeight: "700"
   },
   card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    borderWidth: 1,
-    gap: spacing.md,
-    padding: spacing.lg
+    gap: spacing.md
   },
   cardHeader: {
     alignItems: "flex-start",
@@ -331,7 +316,9 @@ const styles = StyleSheet.create({
   },
   routePanel: {
     backgroundColor: colors.surfaceAlt,
+    borderColor: colors.borderSoft,
     borderRadius: radius.md,
+    borderWidth: 1,
     gap: spacing.sm,
     padding: spacing.md
   },
@@ -351,10 +338,12 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   routeDot: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.primaryDark,
+    borderColor: colors.surface,
+    borderWidth: 2,
     borderRadius: 5,
-    height: 10,
-    width: 10
+    height: 12,
+    width: 12
   },
   routeConnector: {
     backgroundColor: colors.border,
@@ -382,7 +371,7 @@ const styles = StyleSheet.create({
   },
   stepIndex: {
     alignItems: "center",
-    backgroundColor: colors.text,
+    backgroundColor: colors.primaryDark,
     borderRadius: radius.sm,
     height: 24,
     justifyContent: "center",
@@ -409,9 +398,12 @@ const styles = StyleSheet.create({
   },
   rewardRow: {
     alignItems: "center",
+    borderTopColor: colors.borderSoft,
+    borderTopWidth: 1,
     flexDirection: "row",
     gap: spacing.md,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    paddingTop: spacing.md
   },
   rewardText: {
     color: colors.primaryDark,
