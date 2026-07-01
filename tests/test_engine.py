@@ -116,6 +116,14 @@ class CandidateTest(unittest.TestCase):
         )
 
         self.assertEqual(candidates[0]["id"], "plan_shopping_street_demo")
+        self.assertEqual(
+            [candidate["id"] for candidate in candidates[:3]],
+            [
+                "plan_shopping_street_demo",
+                "plan_waiting_time_cafe_demo",
+                "plan_weekend_riverside_demo",
+            ],
+        )
         self.assertEqual(candidates[0]["distanceMeters"], 0)
         stay_step = candidates[0]["stepsSummary"][2]
         self.assertEqual(stay_step["type"], "stay")

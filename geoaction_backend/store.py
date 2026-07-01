@@ -7,7 +7,7 @@ import threading
 from pathlib import Path
 from typing import Callable, TypeVar
 
-from .seed import default_state
+from .seed import default_state, merge_seed_defaults
 
 T = TypeVar("T")
 
@@ -49,6 +49,8 @@ class JsonStore:
             return
 
         self._state = json.loads(self.path.read_text(encoding="utf-8"))
+        if merge_seed_defaults(self._state):
+            self._save()
 
     def _save(self) -> None:
         if self._memory_only:
@@ -60,4 +62,3 @@ class JsonStore:
             encoding="utf-8",
         )
         temporary.replace(self.path)
-
