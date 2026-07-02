@@ -92,8 +92,14 @@ class GeoActionHandler(BaseHTTPRequestHandler):
             lat = float(query["lat"]) if "lat" in query else None
             lng = float(query["lng"]) if "lng" in query else None
             limit = int(query.get("limit", 20))
+            user_id = query.get("userId") or query.get("user_id")
+            import datetime
+            current_hour = datetime.datetime.now().hour
             return self.store.view(
-                lambda state: services.list_plan_candidates(state, lat=lat, lng=lng, limit=limit)
+                lambda state: services.list_plan_candidates(
+                    state, lat=lat, lng=lng, limit=limit,
+                    user_id=user_id, current_hour=current_hour
+                )
             ), 200
 
         if route == ["actions", "start"] and method == "POST":
@@ -121,6 +127,12 @@ class GeoActionHandler(BaseHTTPRequestHandler):
 
         if route == ["analytics", "summary"] and method == "GET":
             return self.store.view(services.analytics_summary), 200
+
+        if len(route) == 2 and route[0] == "users" and route[1] == "stats" and method == "GET":
+            user_id = query.get("userId") or query.get("user_id")
+            if not user_id:
+                return {"error": "userId is required"}, 400
+            return self.store.view(lambda state: services.get_user_stats(state, user_id)), 200
 
         if route == ["webhook-events"] and method == "GET":
             return self.store.view(lambda state: services.list_webhook_events(state, query.get("event"))), 200

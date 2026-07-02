@@ -1,7 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Modal, Pressable, ScrollView, Share, StyleSheet, Text, View } from "react-native";
 
 import { geoactionClient } from "../../src/api/geoactionClient";
 import { ActionButton } from "../../src/components/ActionButton";
@@ -284,6 +284,13 @@ export default function PlansScreen() {
     onSuccess: (actionRun) => {
       setActiveActionRun(actionRun);
       queryClient.invalidateQueries({ queryKey: ["rewards"] });
+      const plan = plansQuery.data?.find((p) => p.id === actionRun.planId);
+      if (plan) {
+        const reward = plan.reward ? `${plan.reward.amount}${plan.reward.currency}分のごほうびもらえた。` : "";
+        Share.share({
+          message: `今日、よりみちした。${reward} 帰り道は、まだ終わってない。 #まちAction`
+        }).catch(() => undefined);
+      }
     },
     onError: (error) => {
       Alert.alert(

@@ -121,13 +121,37 @@ def list_plan_candidates(
     lat: float | None = None,
     lng: float | None = None,
     limit: int = 20,
+    user_id: str | None = None,
+    current_hour: int | None = None,
 ) -> list[dict]:
     origin = {"lat": lat, "lng": lng} if lat is not None and lng is not None else None
+
+    # 直近7日の達成済みplanIdを除外対象に
+    excluded_plan_ids: set[str] = set()
+    if user_id:
+        today = now_iso()[:10]
+        for a in state.get("achievements", []):
+            if a.get("userId") != user_id:
+                continue
+            date = a.get("verifiedAt", "")[:10]
+            if date and today >= date and _days_diff(today, date) < 7:
+                excluded_plan_ids.add(a.get("planId", ""))
+
     candidates = []
 
     for plan in state["plans"]:
         if plan.get("status") != "published" or not _budget_available(plan):
             continue
+
+        # 除外済みプランをスキップ
+        if plan["id"] in excluded_plan_ids:
+            continue
+
+        # タイムウィンドウフィルタ（例: "08:00-20:00"）
+        if current_hour is not None:
+            time_window = plan.get("target", {}).get("timeWindow")
+            if time_window and not _in_time_window(time_window, current_hour):
+                continue
 
         distance = None
         if origin:
@@ -164,7 +188,16 @@ def list_plan_candidates(
             }
         )
 
-    return sorted(candidates, key=lambda item: item["score"], reverse=True)[:limit]
+    sorted_candidates = sorted(candidates, key=lambda item: item["score"], reverse=True)
+
+    # プランが不足している場合はタイムウィンドウ除外を解除してフォールバック
+    if len(sorted_candidates) < 3 and current_hour is not None:
+        return list_plan_candidates(
+            state, lat=lat, lng=lng, limit=limit,
+            user_id=user_id, current_hour=None
+        )
+
+    return sorted_candidates[:limit]
 
 
 def add_plan_to_itinerary(state: dict, plan_id: str, body: dict) -> dict:
@@ -308,11 +341,70 @@ def analytics_summary(state: dict) -> dict:
     }
 
 
+def get_user_stats(state: dict, user_id: str) -> dict:
+    achievements = [a for a in state["achievements"] if a["userId"] == user_id]
+    achievements_sorted = sorted(achievements, key=lambda a: a["verifiedAt"])
+
+    # ストリーク計算（連続達成日数）
+    streak = 0
+    if achievements_sorted:
+        verified_dates = sorted({a["verifiedAt"][:10] for a in achievements_sorted}, reverse=True)
+        streak = 1
+        for i in range(1, len(verified_dates)):
+            prev = verified_dates[i - 1]
+            curr = verified_dates[i]
+            prev_parts = [int(x) for x in prev.split("-")]
+            curr_parts = [int(x) for x in curr.split("-")]
+            # 1日差なら連続とみなす（簡易実装）
+            prev_days = prev_parts[0] * 365 + prev_parts[1] * 30 + prev_parts[2]
+            curr_days = curr_parts[0] * 365 + curr_parts[1] * 30 + curr_parts[2]
+            if prev_days - curr_days == 1:
+                streak += 1
+            else:
+                break
+
+    plan_counts: dict[str, int] = {}
+    for a in achievements:
+        plan_id = a.get("planId", "")
+        plan_counts[plan_id] = plan_counts.get(plan_id, 0) + 1
+
+    badges = []
+    for plan_id, count in plan_counts.items():
+        if count >= 10:
+            badges.append({"type": "ambassador", "planId": plan_id, "count": count})
+        elif count >= 3:
+            badges.append({"type": "regular", "planId": plan_id, "count": count})
+
+    return {
+        "userId": user_id,
+        "totalCompletions": len(achievements),
+        "streak": streak,
+        "planCounts": plan_counts,
+        "badges": badges,
+    }
+
+
 def list_webhook_events(state: dict, event: str | None = None) -> list[dict]:
     events = state["webhookEvents"]
     if event:
         events = [item for item in events if item["event"] == event]
     return sorted(events, key=lambda item: item["createdAt"], reverse=True)
+
+
+def _days_diff(date_a: str, date_b: str) -> int:
+    ya, ma, da = (int(x) for x in date_a.split("-"))
+    yb, mb, db = (int(x) for x in date_b.split("-"))
+    return abs((ya * 365 + ma * 30 + da) - (yb * 365 + mb * 30 + db))
+
+
+def _in_time_window(time_window: str, current_hour: int) -> bool:
+    try:
+        start, end = time_window.split("-")
+        start_h = int(start.split(":")[0])
+        end_h = int(end.split(":")[0])
+        return start_h <= current_hour < end_h
+    except Exception:
+        return True
 
 
 def _distance_to_first_place(state: dict, plan: dict, origin: dict) -> float | None:

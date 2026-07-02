@@ -212,6 +212,23 @@ def _complete_action_run(state: dict, plan: dict, action_run: dict, event: dict)
     action_run["completedAt"] = achievement["verifiedAt"]
     action_run["achievementId"] = achievement["id"]
 
+    place_index = {p["id"]: p for p in state.get("places", [])}
+    completed_place_names = list(dict.fromkeys(
+        place_index[step["placeId"]]["name"]
+        for step in plan.get("steps", [])
+        if step.get("placeId") and step["placeId"] in place_index
+    ))
+    user_achievements = [a for a in state["achievements"] if a["userId"] == action_run["userId"]]
+    action_run["experienceSummary"] = {
+        "planTitle": plan["title"],
+        "sponsorName": plan.get("sponsorName", ""),
+        "rewardAmount": int(plan.get("reward", {}).get("amount", 0)),
+        "rewardCurrency": plan.get("reward", {}).get("currency", "JPY"),
+        "durationMinutes": plan.get("durationMinutes", 0),
+        "completedPlaceNames": completed_place_names,
+        "streakCount": _compute_streak(user_achievements),
+    }
+
     append_webhook_event(
         state,
         "action.completed",
@@ -321,6 +338,23 @@ def _issue_reward(state: dict, plan: dict, action_run: dict, achievement: dict) 
     }
     state["rewards"].append(reward)
     return reward
+
+
+def _compute_streak(achievements: list[dict]) -> int:
+    if not achievements:
+        return 0
+    dates = sorted({a["verifiedAt"][:10] for a in achievements}, reverse=True)
+    streak = 1
+    for i in range(1, len(dates)):
+        y1, m1, d1 = (int(x) for x in dates[i - 1].split("-"))
+        y2, m2, d2 = (int(x) for x in dates[i].split("-"))
+        prev = y1 * 365 + m1 * 30 + d1
+        curr = y2 * 365 + m2 * 30 + d2
+        if prev - curr == 1:
+            streak += 1
+        else:
+            break
+    return streak
 
 
 def _all_steps_completed(action_run: dict) -> bool:
